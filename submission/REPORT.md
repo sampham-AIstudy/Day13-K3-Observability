@@ -2,10 +2,16 @@
 
 ## 1. Thông tin bài làm
 
-- Tên học viên / Nhóm: Phạm Văn Sâm (Cá nhân)
+- Tên nhóm: Nhóm Day 13 Observability
 - Repository URL: `https://github.com/sampham-AIstudy/Day13-K3-Observability.git`
-- Commit SHA cuối: `ad9fd45`
-- Thành viên và vai trò: Phạm Văn Sâm - Quản lý toàn bộ 4 vai trò (Logging & PII, Tracing & Prompt Version, Dashboard & SLO, Incident & Report).
+- Commit SHA cuối: `a17d04d`
+- Danh sách thành viên và vai trò:
+  1. Phạm Văn Sâm (MSSV: 2A202601837) — Logging & PII, System Integration
+  2. Tô Minh Đức (MSSV: 2A202601043) — Tracing & Prompt Versioning
+  3. Nguyễn Đỗ Khải Hoàn (MSSV: 2A202601379) — Dashboard, SLO & Alert Rules
+  4. Nguyễn Văn Duy (MSSV: 2A202601537) — Incident Investigation & Challenge
+  5. Vương Trần Hoàn (MSSV: 2A202601481) — Testing, Quality Assurance & Evidence
+  6. Lê Thành Vinh (MSSV: 2A202601945) — Documentation & Code Review
 
 ## 2. Kết quả kỹ thuật
 
@@ -55,6 +61,11 @@
 
 ## 7. Đóng góp cá nhân
 
-| Thành viên | Phần việc | Commit/PR | Điều đã học |
-|---|---|---|---|
-| Phạm Văn Sâm | Cấu hình Logging, PII, Tracing Langfuse, Dashboard & Alert Rules | `Main branch` | Nắm vững cách tích hợp Langfuse, PII Redaction, Correlation ID và thiết lập hệ thống Observability End-to-End |
+| Thành viên | MSSV | Phần việc | Commit/PR | Điều đã học |
+|---|---|---|---|---|
+| Phạm Văn Sâm | 2A202601837 | Triển khai Structured Logging (`structlog`), PII Scrubbing (`pii.py`) và Middleware `correlation_id` | `Main branch` | Nắm vững kỹ thuật khử PII (Regex + Presidio) và Correlation ID propagation |
+| Tô Minh Đức | 2A202601043 | Tích hợp Langfuse Tracing, Prompt Management (`v1/v2`, `labels`, `rollback`) | `Main branch` | Hiểu rõ cách giám sát LLM Tracing, Prompt Versioning và Rollback trên Langfuse |
+| Nguyễn Đỗ Khải Hoàn | 2A202601379 | Thiết kế Dashboard 6 Panel (`dashboard_app.py`), SLO và Alert Rules (`alert_rules.yaml`) | `Main branch` | Nắm vững cách xây dựng Dashboard Observability và thiết lập Symptom-based Alert Rules |
+| Nguyễn Văn Duy | 2A202601537 | Xây dựng kịch bản điều tra Incident Challenge và kiểm thử luồng Metrics $\rightarrow$ Traces $\rightarrow$ Logs | `Main branch` | Nắm vững phương pháp khoanh vùng và truy tìm Root Cause sự cố hệ thống AI |
+| Vương Trần Hoàn | 2A202601481 | Kiểm thử Public Tests (`pytest`), Validator Scripts và tổng hợp bằng chứng Evidence HTML | `Main branch` | Nắm vững kỹ thuật kiểm thử tự động và thu thập bằng chứng nghiệm thu kỹ thuật |
+| Lê Thành Vinh | 2A202601945 | Xây dựng tài liệu Runbook (`alerts.md`), tổng hợp Báo cáo `REPORT.md` và kiểm duyệt Code | `Main branch` | Nắm vững quy trình viết Runbook xử lý sự cố và báo cáo kỹ thuật tiêu chuẩn |
