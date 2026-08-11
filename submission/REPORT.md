@@ -4,7 +4,7 @@
 
 - Tên học viên / Nhóm: Phạm Văn Sâm (Cá nhân)
 - Repository URL: `https://github.com/sampham-AIstudy/Day13-K3-Observability.git`
-- Commit SHA cuối: (Sẽ cập nhật sau git commit)
+- Commit SHA cuối: `ad9fd45`
 - Thành viên và vai trò: Phạm Văn Sâm - Quản lý toàn bộ 4 vai trò (Logging & PII, Tracing & Prompt Version, Dashboard & SLO, Incident & Report).
 
 ## 2. Kết quả kỹ thuật
