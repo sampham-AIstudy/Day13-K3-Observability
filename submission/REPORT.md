@@ -49,15 +49,13 @@
 
 ## 6. Điều tra challenge
 
-*(Lưu ý: Phần này sẽ thực hiện ngay sau khi Lab Coach release file `config/challenge.json` chính thức)*
-
-- Challenge ID: (Chờ Lab Coach release file)
-- Triệu chứng từ metrics: (Chờ Lab Coach release file)
-- Trace ID liên quan: (Chờ Lab Coach release file)
-- Log line/correlation ID liên quan: (Chờ Lab Coach release file)
-- Root cause: (Chờ Lab Coach release file)
-- Fix action: (Chờ Lab Coach release file)
-- Preventive measure: (Chờ Lab Coach release file)
+- Challenge ID: `day13-k3-observability-v1` (Cohort K3)
+- Triệu chứng từ metrics: Độ trễ P95 Latency của feature `refund` tăng đột biến từ ~150ms lên **2,658ms - 13,300ms**, vượt ngưỡng quy định `latency_threshold_ms: 2000ms` trong `config/challenge.json`.
+- Trace ID liên quan: `req-94196f05`, `req-05295c96`, `req-e99037f7`, `req-6283bee7`, `req-a1e47283`.
+- Log line/correlation ID liên quan: Dòng log event `incident_enabled` (`payload: {"name": "rag_slow"}`) tại timestamp `2026-08-11T03:12:18Z` gây nghẽn ở bước RAG Retrieval.
+- Root cause: Sự cố `rag_slow` được bật trên hệ thống gây ra hiện tượng nghẽn mạng/chậm truy vấn ở tầng Vector DB (RAG Retrieval) khi xử lý các câu hỏi thuộc feature `refund`.
+- Fix action: Tắt kịch bản incident bằng lệnh `py scripts/inject_incident.py --scenario rag_slow --disable` và tối ưu bộ nhớ cache / vector index cho tầng RAG.
+- Preventive measure: Cấu hình Alert Rule `HighLatencyP95` (Cảnh báo khi P95 > 3000ms kéo dài trên 5m) và gắn chỉ số SLI `latency_p95_ms` để tự động phát hiện nghẽn RAG trước khi ảnh hưởng đến người dùng.
 
 ## 7. Đóng góp cá nhân
 
