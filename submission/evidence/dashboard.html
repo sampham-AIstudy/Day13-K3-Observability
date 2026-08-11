@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Day 13 Observability Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        h1 { color: #38bdf8; text-align: center; margin-bottom: 30px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .card-header { font-size: 14px; font-weight: 600; text-transform: uppercase; color: #94a3b8; margin-bottom: 10px; }
+        .value { font-size: 32px; font-weight: 700; color: #f8fafc; }
+        .sub { font-size: 14px; color: #38bdf8; margin-top: 5px; }
+        .status-ok { color: #4ade80; }
+        .status-warn { color: #facc15; }
+        .slo { font-size: 12px; color: #64748b; margin-top: 10px; border-top: 1px solid #334155; padding-top: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Day 13 — AI System Observability Dashboard</h1>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header">1. Latency (P50 / P95 / P99)</div>
+            <div class="value">154.5 <span style="font-size: 18px;">ms (P95)</span></div>
+            <div class="sub">P50: 150.0ms | P99: 913.3ms</div>
+            <div class="slo">SLO Threshold: &le; 3000 ms <span class="status-ok">&check; PASS</span></div>
+        </div>
+        <div class="card">
+            <div class="card-header">2. Traffic (Requests)</div>
+            <div class="value">31</div>
+            <div class="sub">Total Received Requests</div>
+            <div class="slo">Window: Last 60 Minutes</div>
+        </div>
+        <div class="card">
+            <div class="card-header">3. Error Rate</div>
+            <div class="value">0.00%</div>
+            <div class="sub">Failed Requests: 0</div>
+            <div class="slo">SLO Threshold: &le; 2.0% <span class="status-ok">&check; PASS</span></div>
+        </div>
+        <div class="card">
+            <div class="card-header">4. Total Cost (USD)</div>
+            <div class="value">$0.06345</div>
+            <div class="sub">Estimated LLM API Spend</div>
+            <div class="slo">Budget Limit: $2.50 / day</div>
+        </div>
+        <div class="card">
+            <div class="card-header">5. Token Usage</div>
+            <div class="value">5042</div>
+            <div class="sub">In: 1015 | Out: 4027</div>
+            <div class="slo">Total Prompt & Completion Tokens</div>
+        </div>
+        <div class="card">
+            <div class="card-header">6. Quality Score</div>
+            <div class="value">0.88 / 1.0</div>
+            <div class="sub">Heuristic Evaluation Avg</div>
+            <div class="slo">SLO Target: &ge; 0.75 <span class="status-ok">&check; PASS</span></div>
+        </div>
+    </div>
+</body>
+</html>

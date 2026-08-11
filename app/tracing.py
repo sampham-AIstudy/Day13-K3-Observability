@@ -3,6 +3,10 @@ from __future__ import annotations
 import os
 from typing import Any
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 try:
     from langfuse import get_client, observe
 
