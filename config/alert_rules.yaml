@@ -1,19 +1,19 @@
 alerts:
   - name: HighLatencyP95
-    severity: critical
-    condition: p95_latency_ms > 3000 for 5m
+    severity: warning
+    condition: latency_p95_ms > 3000 for 5m
     type: symptom-based
-    owner: OnCall-Engineer
+    owner: observability-team
     runbook: docs/alerts.md#alert-1
   - name: HighErrorRate
     severity: critical
     condition: error_rate_pct > 2 for 5m
     type: symptom-based
-    owner: OnCall-Engineer
+    owner: api-team
     runbook: docs/alerts.md#alert-2
   - name: LowQualityScore
     severity: warning
     condition: quality_score_avg < 0.75 for 10m
     type: symptom-based
-    owner: AI-Engineer
+    owner: ai-team
     runbook: docs/alerts.md#alert-3

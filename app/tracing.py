@@ -35,6 +35,16 @@ def get_langfuse_client():
     return get_client()
 
 
+def flush_traces() -> None:
+    """Flush completed observations immediately for deterministic lab evidence."""
+    if tracing_enabled():
+        try:
+            get_client().flush()
+        except Exception:
+            # Observability must not make an otherwise successful API request fail.
+            return
+
+
 def tracing_enabled() -> bool:
     return LANGFUSE_SDK_AVAILABLE and bool(
         os.getenv("LANGFUSE_PUBLIC_KEY") and os.getenv("LANGFUSE_SECRET_KEY")

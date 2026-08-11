@@ -2,9 +2,6 @@ from __future__ import annotations
 
 import os
 from contextlib import asynccontextmanager
-from dotenv import load_dotenv
-
-load_dotenv()
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -17,14 +14,14 @@ from .metrics import record_error, snapshot
 from .middleware import CorrelationIdMiddleware
 from .pii import hash_user_id, summarize_text
 from .schemas import ChatRequest, ChatResponse
-from .tracing import tracing_enabled
+from .tracing import flush_traces, tracing_enabled
 
 configure_logging()
 log = get_logger()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     log.info(
         "app_started",
         service=os.getenv("APP_NAME", "day13-observability-lab"),
@@ -58,7 +55,7 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse:
         model=agent.model,
         env=os.getenv("APP_ENV", "dev"),
     )
-    
+
     log.info(
         "request_received",
         service="api",
@@ -71,6 +68,7 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse:
             session_id=body.session_id,
             message=body.message,
         )
+        flush_traces()
         log.info(
             "response_sent",
             service="api",

@@ -1,69 +1,53 @@
 # Báo cáo Day 13 Observability
 
-## 1. Thông tin bài làm
+## 1. Thông tin nhóm
 
-- Tên nhóm: Nhóm Day 13 Observability
-- Repository URL: `https://github.com/sampham-AIstudy/Day13-K3-Observability.git`
-- Commit SHA cuối: `6a74df8`
-- Danh sách thành viên và vai trò:
-  1. Phạm Văn Sâm (MSSV: 2A202601837) — Logging & PII, System Integration
-  2. Tô Minh Đức (MSSV: 2A202601043) — Tracing & Prompt Versioning
-  3. Nguyễn Đỗ Khải Hoàn (MSSV: 2A202601379) — Dashboard, SLO & Alert Rules
-  4. Nguyễn Văn Duy (MSSV: 2A202601537) — Incident Investigation & Challenge
-  5. Vương Trần Hoàn (MSSV: 2A202601481) — Testing, Quality Assurance & Evidence
-  6. Lê Thành Vinh (MSSV: 2A202601945) — Documentation & Code Review
+- Tên nhóm: K3 - Observability Team
+- Repository URL: https://github.com/sampham-AIstudy/Day13-K3-Observability.git
+- Commit SHA cuối: cd84f4f
+- Thành viên và vai trò: Hoàn — triển khai logging/tracing/PII, prompt versioning, dashboard validation và viết báo cáo.
 
 ## 2. Kết quả kỹ thuật
 
-- Điểm `validate_logs.py`: **100 / 100** (Tất cả 4 tiêu chí JSON Schema, Correlation ID, Log Enrichment, PII Scrubbing đều PASSED).
-- Tổng số traces: **21+ Traces** ghi nhận trực tiếp trên Langfuse Cloud UI (`https://us.cloud.langfuse.com`).
-- Số PII leak còn lại: **0** (Hoàn toàn làm sạch PII Email, SĐT, CCCD, Thẻ tín dụng, Passport và Địa chỉ).
-- Link/đường dẫn dashboard: `submission/evidence/dashboard.html`
+- Điểm `validate_logs.py`: 100/100 (Estimated Score)
+- Tổng số traces: 10+ trace thực tế đã ghi nhận cho prompt versioning và incident investigation
+- Số PII leak còn lại: 0
+- Link/đường dẫn dashboard: [submission/evidence/10-dashboard.png](submission/evidence/10-dashboard.png)
 
 ## 3. Logging và tracing
 
-- Evidence correlation ID: Định dạng `req-<8-char-hex>` (Ví dụ: `req-327be679`, `req-6139b2bd`, `req-aa6fb950`) xuất hiện đồng bộ ở cả HTTP Response Header (`x-request-id`), `structlog` contextvars và file `data/logs.jsonl`.
-- Evidence PII redaction: Các mẫu thông tin nhạy cảm như Email (`student@vinuni.edu.vn`), SĐT (`0901234567`), Thẻ tín dụng được làm sạch tự động bằng processor `scrub_event` thành `[REDACTED_EMAIL]`, `[REDACTED_PHONE_VN]`, `[REDACTED_CREDIT_CARD]`.
-- Evidence trace waterfall: Span gốc `agent.run` lồng các sub-spans: `RAG Retrieval`, `Prompt Resolution`, `LLM Generation` (`claude-sonnet-4-5`).
-- Giải thích một span đáng chú ý: Span `generation` (LLM Call) ghi nhận TTFT, Token Input (35 tokens), Token Output (152 tokens), Latency (150ms) và Cost ($0.002385).
+- Evidence correlation ID: req-56997088, req-0d81ad4f, req-3aeae714; minh chứng ở [submission/evidence/03-correlation-id.png](submission/evidence/03-correlation-id.png) và [data/logs.jsonl](data/logs.jsonl)
+- Evidence PII redaction: [submission/evidence/04-pii-redaction.png](submission/evidence/04-pii-redaction.png); các payload đã được scrub thành [REDACTED_EMAIL], [REDACTED_PHONE_VN] và [REDACTED_CREDIT_CARD]
+- Evidence trace waterfall: [submission/evidence/05-langfuse-traces.png](submission/evidence/05-langfuse-traces.png)
+- Giải thích một span đáng chú ý: span `retrieve` bị chặn khoảng 2,5 giây khi incident `rag_slow` được bật, khiến latency tăng vượt ngưỡng và dễ bị phát hiện trên dashboard.
 
 ## 4. Prompt versioning
 
-- Prompt name: `day13-chat`
-- Version/label baseline: Version 1 (`labels: ["production", "baseline"]`)
-- Version/label candidate: Version 2 (`labels: ["candidate"]`)
-- Trace ID của mỗi version: 
-  - Version 1 (`production`): Trace ghi nhận `prompt_version="1"`, `prompt_source="langfuse"`, `prompt_label="production"`.
-  - Version 2 (`candidate`): Trace ghi nhận `prompt_version="2"`, `prompt_source="langfuse"`, `prompt_label="candidate"`.
-- Bằng chứng đổi label hoặc rollback: Thực hiện lệnh chuyển label `production` về Version 1 thành công trên Langfuse SDK, metadata trace xác nhận rollback về `prompt_version="1"`.
+- Prompt name: day13-chat
+- Version/label baseline: v1 / label `baseline`
+- Version/label candidate: v2 / label `candidate`
+- Trace ID của mỗi version: được ghi trong các evidence screenshot của prompt versioning: [submission/evidence/07-prompt-versions.png](submission/evidence/07-prompt-versions.png) và [submission/evidence/07b-trace-candidate-v2.png](submission/evidence/07b-trace-candidate-v2.png)
+- Bằng chứng đổi label hoặc rollback: production được chuyển sang v2 ở [submission/evidence/08a-production-v2.png](submission/evidence/08a-production-v2.png) và rollback về v1 ở [submission/evidence/08b-production-rollback-v1.png](submission/evidence/08b-production-rollback-v1.png)
 
 ## 5. Dashboard, SLO và alerts
 
-- Kết quả `validate_dashboard.py`: **HỢP LỆ: 6/6 panel có trong dashboard contract**.
-- Evidence dashboard: File HTML báo cáo 6 panel tại `submission/evidence/dashboard.html`.
-- SLO đã chọn và lý do:
-  - `latency_p95_ms <= 3000ms` (Đảm bảo phản hồi nhanh cho trải nghiệm người dùng).
-  - `error_rate_pct <= 2.0%` (Giữ cho API hoạt động ổn định và tin cậy).
-  - `quality_score_avg >= 0.75` (Đảm bảo câu trả lời đủ thông tin và chính xác).
-- Alert rules và runbook: Cập nhật 3 rules trong `config/alert_rules.yaml` (`HighLatencyP95`, `HighErrorRate`, `LowQualityScore`) kết nối trực tiếp với tài liệu `docs/alerts.md`.
+- Kết quả `validate_dashboard.py`: PASS; validator xác nhận đủ 6/6 panel theo contract
+- Evidence dashboard: [submission/evidence/10-dashboard.png](submission/evidence/10-dashboard.png) và [config/dashboard.yaml](config/dashboard.yaml)
+- SLO đã chọn và lý do: SLO `latency_p95_ms <= 3000 ms` vì đây là chỉ số trực tiếp phản ánh incident `rag_slow`; khi latency tăng, cảnh báo sẽ rõ ràng và dễ liên kết với trace/logs
+- Alert rules và runbook: rule `HighLatencyP95` trong [config/alert_rules.yaml](config/alert_rules.yaml); runbook ở [docs/alerts.md](docs/alerts.md) hướng dẫn kiểm tra dashboard, mở trace liên quan, tra correlation ID và xác nhận incident status trước khi can thiệp
 
 ## 6. Điều tra challenge
 
-- Challenge ID: `day13-k3-observability-v1` (Cohort K3)
-- Triệu chứng từ metrics: Độ trễ P95 Latency của feature `refund` tăng đột biến từ ~150ms lên **2,658ms - 13,300ms**, vượt ngưỡng quy định `latency_threshold_ms: 2000ms` trong `config/challenge.json`.
-- Trace ID liên quan: `req-94196f05`, `req-05295c96`, `req-e99037f7`, `req-6283bee7`, `req-a1e47283`.
-- Log line/correlation ID liên quan: Dòng log event `incident_enabled` (`payload: {"name": "rag_slow"}`) tại timestamp `2026-08-11T03:12:18Z` gây nghẽn ở bước RAG Retrieval.
-- Root cause: Sự cố `rag_slow` được bật trên hệ thống gây ra hiện tượng nghẽn mạng/chậm truy vấn ở tầng Vector DB (RAG Retrieval) khi xử lý các câu hỏi thuộc feature `refund`.
-- Fix action: Tắt kịch bản incident bằng lệnh `py scripts/inject_incident.py --scenario rag_slow --disable` và tối ưu bộ nhớ cache / vector index cho tầng RAG.
-- Preventive measure: Cấu hình Alert Rule `HighLatencyP95` (Cảnh báo khi P95 > 3000ms kéo dài trên 5m) và gắn chỉ số SLI `latency_p95_ms` để tự động phát hiện nghẽn RAG trước khi ảnh hưởng đến người dùng.
+- Challenge ID: day13-k3-observability-v1
+- Triệu chứng từ metrics: latency p95/p99 tăng đột biến từ khoảng 150 ms lên gần 2.650 ms khi incident `rag_slow` được bật, trong khi traffic và quality vẫn ổn định
+- Trace ID liên quan: trace cho request bị ảnh hưởng được minh họa trong [submission/evidence/12-challenge.png](submission/evidence/12-challenge.png)
+- Log line/correlation ID liên quan: sự kiện `incident_enabled` ở correlation ID `req-4e103e52`, và request bị ảnh hưởng `req-56997088`/`req-0d81ad4f`
+- Root cause: incident `rag_slow` kích hoạt một sleep 2,5 giây trong [app/mock_rag.py](app/mock_rag.py), làm retrieval path chậm và kéo latency vượt ngưỡng
+- Fix action: tắt incident hoặc giới hạn sleep chỉ ở môi trường test/non-production, đồng thời giữ alert/trace/log để việc điều tra nhanh và có thể rollback an toàn
+- Preventive measure: thêm guardrail cho incident flag, theo dõi SLO/alert liên tục và giữ PII redaction trước khi ghi log để tránh rò dữ liệu
 
 ## 7. Đóng góp cá nhân
 
-| Thành viên | MSSV | Phần việc | Commit/PR | Điều đã học |
-|---|---|---|---|---|
-| Phạm Văn Sâm | 2A202601837 | Triển khai Structured Logging (`structlog`), PII Scrubbing (`pii.py`) và Middleware `correlation_id` | `Main branch` | Nắm vững kỹ thuật khử PII (Regex + Presidio) và Correlation ID propagation |
-| Tô Minh Đức | 2A202601043 | Tích hợp Langfuse Tracing, Prompt Management (`v1/v2`, `labels`, `rollback`) | `Main branch` | Hiểu rõ cách giám sát LLM Tracing, Prompt Versioning và Rollback trên Langfuse |
-| Nguyễn Đỗ Khải Hoàn | 2A202601379 | Thiết kế Dashboard 6 Panel (`dashboard_app.py`), SLO và Alert Rules (`alert_rules.yaml`) | `Main branch` | Nắm vững cách xây dựng Dashboard Observability và thiết lập Symptom-based Alert Rules |
-| Nguyễn Văn Duy | 2A202601537 | Xây dựng kịch bản điều tra Incident Challenge và kiểm thử luồng Metrics $\rightarrow$ Traces $\rightarrow$ Logs | `Main branch` | Nắm vững phương pháp khoanh vùng và truy tìm Root Cause sự cố hệ thống AI |
-| Vương Trần Hoàn | 2A202601481 | Kiểm thử Public Tests (`pytest`), Validator Scripts và tổng hợp bằng chứng Evidence HTML | `Main branch` | Nắm vững kỹ thuật kiểm thử tự động và thu thập bằng chứng nghiệm thu kỹ thuật |
-| Lê Thành Vinh | 2A202601945 | Xây dựng tài liệu Runbook (`alerts.md`), tổng hợp Báo cáo `REPORT.md` và kiểm duyệt Code | `Main branch` | Nắm vững quy trình viết Runbook xử lý sự cố và báo cáo kỹ thuật tiêu chuẩn |
+| Thành viên | Phần việc                                                                                                | Commit/PR            | Điều đã học                                                                                     |
+| ---------- | -------------------------------------------------------------------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------- |
+| Hoàn    | Triển khai logging/tracing, PII redaction, prompt versioning, dashboard validation và hoàn thiện báo cáo | commit cuối: cd84f4f | Hiểu cách kết nối metrics → traces → logs và dùng correlation ID để điều tra incident nhanh hơn |
