@@ -4,7 +4,7 @@
 
 - Tên nhóm: Nhóm Day 13 Observability
 - Repository URL: `https://github.com/sampham-AIstudy/Day13-K3-Observability.git`
-- Commit SHA cuối: `9da2387`
+- Commit SHA cuối: `dc02c65`
 - Danh sách thành viên và vai trò:
   1. Phạm Văn Sâm (MSSV: 2A202601837) — Logging & PII, System Integration
   2. Tô Minh Đức (MSSV: 2A202601043) — Tracing & Prompt Versioning
