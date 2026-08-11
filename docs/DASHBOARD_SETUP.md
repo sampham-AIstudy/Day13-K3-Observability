@@ -40,4 +40,17 @@ Validator kiểm tra cấu trúc contract; nó không thể chứng minh biểu 
 5. Mở trace chậm và tìm log có cùng correlation ID.
 6. Tắt incident bằng `python scripts/inject_incident.py --scenario rag_slow --disable`.
 
+## Dashboard local đi kèm repo
+
+Repo có dashboard HTML không cần cài thêm dependency. Sau khi API và load test đã tạo
+`data/logs.jsonl`, chạy:
+
+```bash
+python scripts/dashboard.py
+```
+
+Mở `http://127.0.0.1:8501`. Dashboard đọc log trong 60 phút gần nhất, tự refresh
+mỗi 30 giây và hiển thị đúng sáu panel cùng threshold trong contract. Giữ cả API và
+dashboard đang chạy khi chụp evidence runtime.
+
 Ảnh dashboard phải nhìn được tên panel, time range, đơn vị và threshold. Báo cáo phải dẫn lại trace ID hoặc log line dùng để giải thích thay đổi.
